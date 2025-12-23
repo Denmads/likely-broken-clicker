@@ -4,19 +4,22 @@ import { LogarithmicValue } from './logarithmicValue';
 import * as GameState from './state';
 import { TraitRegistry } from './traitRegistry';
 import type { EffectContext, GameEvent } from './types';
-import { formatLog10Number } from './ui';
 
 class GameLoop {
-  private game: GameState.GameState;
-  private lastFrameTime: number;
-  private accumulatedDeltaTime: number;
+  private game!: GameState.GameState;
+  private lastFrameTime!: number;
+  private accumulatedDeltaTime!: number;
 
   constructor() {
     GameState.initialize();
+    this.reset()
+    this.addUIEventListeners()
+  }
+
+  reset() {
     this.game = GameState.state;
     this.lastFrameTime = performance.now();
     this.accumulatedDeltaTime = 0;
-    this.addUIEventListeners()
   }
 
   addUIEventListeners() {
@@ -138,5 +141,5 @@ class GameLoop {
 }
 
 
-const loop = new GameLoop();
+export const loop = new GameLoop();
 loop.start();

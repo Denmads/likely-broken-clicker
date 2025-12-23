@@ -55,6 +55,10 @@ export type GameState = {
 const SAVE_KEY = "local-save"
 export let state: GameState
 
+window.addEventListener("beforeunload", () => {
+    saveState()
+})
+
 export function initialize() {
     loadState()
     setInterval(() => {

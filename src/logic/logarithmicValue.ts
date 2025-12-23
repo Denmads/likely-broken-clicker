@@ -1,5 +1,3 @@
-import { formatLog10Number } from "./ui";
-
 export class LogarithmicValue {
 
     static zero(): LogarithmicValue {
@@ -52,6 +50,36 @@ export class LogarithmicValue {
     }
 
     toFormattedString(): string {
-        return formatLog10Number(this.log ?? 0)
+        if (this.isZero()) return "0"
+
+        if (this.log! < 3) {
+            let val = Math.pow(10, this.log!);
+            const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
+            return formatter.format(val)
+        }
+
+        const units = [
+            "", "K", "M", "B", "T", // thousand → trillion
+            "Qa", "Qi", "Sx", "Sp", "Oc", "No", // quadrillion → novemdecillion
+            "Dc", "Ud", "Dd", "Td", "Qad", "Qid", "Sxd", "Spd", "Ocd", "Nd", // 10^33 → 10^51
+            "Vg", "Uvg", "Dvg", "Tvg", "Qavg", "Qivg", "Sxvg", "Spvg", "Ocvg", "Novg", // 10^54 → 10^81
+            "Tg", "Utg", "Dtg", "Ttg", "Qatg", "Qitg", "Sxtg", "Sptg", "Octg", "Notg", // 10^84 → 10^111
+            "Qg", "Uqg", "Dqg", "Tqg", "Qaqg", "Qiqg", "Sxqg", "Spqg", "Ocqg", "Noqg", // 10^114 → 10^141
+            "Rg", "Urg", "Drg", "Trg", "Qarg", "Qirg", "Sxrg", "Sprg", "Ocrg", "Norg", // 10^144 → 10^171
+            "Cg", "Ucg", "Dcg", "Tcg", "Qacg", "Qicg", "Sxcg", "Spcg", "Occg", "Nocg", // 10^174 → 10^201
+            "Mg", "Umg", "Dmg", "Tmg", "Qamg", "Qimg", "Sxmg", "Spmg", "Ocmg", "Nomg", // 10^204 → 10^231
+            "Gg", "Ugg", "Dgg", "Tgg", "Qagg", "Qigg", "Sxgg", "Spgg", "Ocgg", "Nogg"  // 10^234 → 10^261+
+        ];
+
+        let u = 0;
+        while (this.log! >= 3 && u < units.length - 1) {
+            this.log! -= 3;
+            u++;
+        }
+
+        let val = Math.pow(10, this.log! % 3);
+
+        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
+        return `${formatter.format(val)}${units[u]}`;
     }
 }
