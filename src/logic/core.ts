@@ -4,6 +4,7 @@ import { LogarithmicValue } from './logarithmicValue';
 import * as GameState from './state';
 import { TraitRegistry } from './traitRegistry';
 import type { EffectContext, GameEvent } from './types';
+import { formatDuration } from './ui';
 
 class GameLoop {
   private game!: GameState.GameState;
@@ -128,9 +129,9 @@ class GameLoop {
 
   private updateUI(deltaTime: number) {
     // Decoupled UI updates
+    (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = this.game.resources.operations.value.toFormattedString();
 
-    console.log("UI Update");
-    (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = this.game.resources.operations.value.toFormattedString()
+    (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(this.game.meta.time)
   }
 
   // Global event emitter

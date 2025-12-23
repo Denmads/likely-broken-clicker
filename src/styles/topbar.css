@@ -1,5 +1,6 @@
 #top-bar {
     grid-area: topbar;
+    border-bottom: 1px solid #555555;
     border-width: 0 0 1px 0;
     padding: 0.5rem 0 0 0;
     

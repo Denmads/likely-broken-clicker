@@ -95,14 +95,32 @@ textarea:not([rows]) {
 
 .container {
     display: grid;
-    grid-template-columns: minmax(auto, 20%) auto;
-    grid-template-rows: repeat(auto, 5);
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(auto, 2);
     grid-template-areas: 
-        "topbar topbar"
+        "topbar"
+        "main";
+
+    
+}
+
+.main-content {
+    --panel-spacing: 1rem;
+
+    grid-area: main;
+
+    display: grid;
+    grid-template-columns: minmax(auto, 20%) auto;
+    grid-template-rows: repeat(auto, 4);
+    grid-template-areas: 
         "output primary"
         "manual-btn subsystems"
         "log log"
         "hotfixes debug";
+
+    padding: var(--panel-spacing);
+    row-gap: var(--panel-spacing);
+    column-gap: var(--panel-spacing);
 
     > * {
         padding: 0.5rem;

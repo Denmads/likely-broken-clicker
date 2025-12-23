@@ -39,3 +39,24 @@ export function formatNumber(value: number): string {
   const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
   return `${formatter.format(value)}${units[u]}`;
 }
+
+export function formatDuration(seconds: number) {
+  if (seconds < 0) seconds = -seconds;
+  const time = {
+    day: Math.floor(seconds / 86400),
+    hour: Math.floor(seconds / 3600) % 24,
+    minute: Math.floor(seconds / 60) % 60,
+    second: Math.floor(seconds) % 60
+  };
+
+  let filteredEntries = Object.entries(time)
+    .filter(val => val[1] !== 0)
+
+  if (filteredEntries.length == 0)
+    return "0s"
+
+  return filteredEntries
+    .map(([key, val]) => `${val}${key[0]}`)
+    // .map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
+    .join(', ');
+};
