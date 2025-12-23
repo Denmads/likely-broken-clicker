@@ -130,6 +130,7 @@ class GameLoop {
   private updateUI(deltaTime: number) {
     // Decoupled UI updates
     (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = this.game.resources.operations.value.toFormattedString();
+    (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = this.game.resources.operations.perSecond.toFormattedString();
 
     (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(this.game.meta.time)
   }

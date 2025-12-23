@@ -8,6 +8,7 @@ export type ServiceId = string;
 export interface ServiceDefinition {
     id: ServiceId,
     displayName: string,
+    description: string,
     maxTraits: number,
     baseOutput: LogarithmicValue,
     baseInstability: number,

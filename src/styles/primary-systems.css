@@ -1,3 +1,175 @@
 .primary-systems-container {
     grid-area: primary;
 }
+
+.systems-list {
+  max-height: 280px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.system-row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  gap: 10px;
+
+  padding: 6px 8px;
+
+  background: #141414;
+  border: 1px solid #2a2a2a;
+
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+
+  transition: background 0.1s ease;
+}
+.system-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #9b9b9b;
+  font-size: 20px;
+}
+
+.system-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.system-name {
+  color: #e5e5e5;
+  letter-spacing: 0.1em;
+}
+
+.system-traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.trait {
+  padding: 1px 4px;
+  border: 1px solid #3a3a3a;
+  color: #9bd670;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.trait.warn {
+  color: #f2c94c;
+  border-color: #6d5a1f;
+}
+
+.trait.error {
+  color: #eb5757;
+  border-color: #6d2a2a;
+}
+
+.system-metrics {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.metric {
+  display: flex;
+  gap: 4px;
+  color: #cfcfcf;
+}
+
+.metric-label {
+  color: #7a7a7a;
+  letter-spacing: 0.1em;
+}
+
+.metric-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.metric.warn .metric-value {
+  color: #f2c94c;
+}
+
+.metric.error .metric-value {
+  color: #eb5757;
+}
+
+@keyframes unstable-pulse {
+  0% { opacity: 1; background: #141414; }
+  90% { opacity: 1; background: #141414; }
+  95% { opacity: 0.75; background: #2b2512; }
+  100% { opacity: 1; background: #141414; }
+}
+
+.system-row.unstable {
+  animation: unstable-pulse 6s infinite;
+}
+
+.system-unlock {
+  cursor: pointer;
+  text-align: left;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1a1a1a 0%,
+      #141414 100%
+    );
+
+  border: 1px dashed #3a3a3a;
+
+  .system-main {
+    justify-content: center;
+  }
+}
+
+.system-unlock:hover {
+  background: #1f1f1f;
+  border-color: #5a5a5a;
+}
+
+.system-unlock .system-icon {
+  color: #9bd670;
+  font-size: 20px;
+}
+
+.system-subtext {
+  font-size: 11px;
+  color: #7a7a7a;
+  letter-spacing: 0.08em;
+}
+
+.system-cost {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+}
+
+.cost-label {
+  color: #7a7a7a;
+  letter-spacing: 0.1em;
+}
+
+.cost-value {
+  color: #f2f2f2;
+  font-variant-numeric: tabular-nums;
+}
+
+.system-unlock.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.system-unlock.disabled:hover {
+  background: #141414;
+  border-color: #3a3a3a;
+}

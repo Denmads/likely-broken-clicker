@@ -1,57 +1,148 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
-     <link rel="stylesheet" href="src/styles/style.css">
-     <link rel="stylesheet" href="src/styles/topbar.css">
-     <link rel="stylesheet" href="src/styles/outputs.css">
-     <link rel="stylesheet" href="src/styles/primary-systems.css">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <head>
+        <meta charset="UTF-8" />
+        <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+        <link rel="stylesheet" href="src/styles/style.css" />
+        <link rel="stylesheet" href="src/styles/topbar.css" />
+        <link rel="stylesheet" href="src/styles/outputs.css" />
+        <link rel="stylesheet" href="src/styles/primary-systems.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <script src="https://example.com/fontawesome/v7.0.1/js/fontawesome.js" data-auto-replace-svg="nest"></script>
-      <script src="https://example.com/fontawesome/v7.0.1/js/solid.js"></script>
-    <title>Likely Broken</title>
-  </head>
-  <body>
-    <div class="container">
-        <!-- TopBar -->
-        <div id="top-bar">
-            <p class="title">
-                <span class="word likely">LIKELY</span>
-                <span class="word broken">BROKEN</span>
-            </p>
-            <div class="menu">
-                <i class="fa-solid fa-angle-down"></i>
-                <button id="temp-reset">RESET</button>
+        <script
+            src="https://example.com/fontawesome/v7.0.1/js/fontawesome.js"
+            data-auto-replace-svg="nest"
+        ></script>
+        <script src="https://example.com/fontawesome/v7.0.1/js/solid.js"></script>
+        <title>Likely Broken</title>
+    </head>
+    <body>
+        <div class="container">
+            <!-- TopBar -->
+            <div id="top-bar">
+                <p class="title">
+                    <span class="word likely">LIKELY</span>
+                    <span class="word broken">BROKEN</span>
+                </p>
+                <div class="menu">
+                    <i class="fa-solid fa-angle-down"></i>
+                    <button id="temp-reset">RESET</button>
+                </div>
+                <div class="info">
+                    <p id="system-name">&lt;system-name&gt;</p>
+                    <p id="version">&lt;version&gt;</p>
+                    <p id="time">&lt;time&gt;</p>
+                    <p id="stability-level">&lt;instability&gt;</p>
+                </div>
             </div>
-            <div class="info">
-                <p id="system-name">&lt;system-name&gt;</p>
-                <p id="version">&lt;version&gt;</p>
-                <p id="time">&lt;time&gt;</p>
-                <p id="stability-level">&lt;instability&gt;</p>
+
+            <div class="main-content">
+                <!-- Outputs -->
+                <div class="outputs">
+                    <div class="panel-header">
+                        <div class="panel-title">Resources</div>
+                        <div class="panel-status">OK</div>
+                    </div>
+                    <div class="panel-body">
+                        <p id="operations">
+                            Operations: <span class="value">0</span>
+                        </p>
+                        <p id="operations-per-second">
+                            Ops/S: <span class="value">0</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Manual Button -->
+                <button class="manual-btn">Produce</button>
+
+                <!-- Primary Systems -->
+                <div class="primary-systems-container">
+                    <div class="panel-header">
+                        <div class="panel-title">SYSTEMS</div>
+                        <div class="panel-status">OK</div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="systems-list">
+                            <div class="system-row">
+                                <div class="system-icon">⚙</div>
+
+                                <div class="system-main">
+                                    <div class="system-name">AUTH SERVICE</div>
+
+                                    <div class="system-traits">
+                                        <span class="trait">CACHE LAYER</span>
+                                        <span class="trait warn"
+                                            >RACE CONDITION</span
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="system-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">OUT</span>
+                                        <span class="metric-value">12.4K</span>
+                                    </div>
+                                    <div class="metric warn">
+                                        <span class="metric-label">INST</span>
+                                        <span class="metric-value">38%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="system-row unstable">
+                                <div class="system-icon">🧠</div>
+
+                                <div class="system-main">
+                                    <div class="system-name">RECOMMENDER</div>
+
+                                    <div class="system-traits">
+                                        <span class="trait"
+                                            >PARALLEL THREADS</span
+                                        >
+                                        <span class="trait error"
+                                            >MEMORY LEAK</span
+                                        >
+                                        <span class="trait error"
+                                            >UNBOUNDED QUEUE</span
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="system-metrics">
+                                    <div class="metric">
+                                        <span class="metric-label">OUT</span>
+                                        <span class="metric-value">91.2K</span>
+                                    </div>
+                                    <div class="metric error">
+                                        <span class="metric-label">INST</span>
+                                        <span class="metric-value">87%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="system-row system-unlock">
+                                <div class="system-icon">+</div>
+
+                                <div class="system-main">
+                                    <div class="system-name">
+                                        DEPLOY NEW SYSTEM
+                                    </div>
+                                </div>
+
+                                <div class="system-cost">
+                                    <span class="cost-label">COST</span>
+                                    <span class="cost-value">250K</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- Outputs -->
-            <div class="outputs">
-                <p id="operations">Operations: <span class="value">0</span></p>
-            </div>
-    
-            <!-- Manual Button -->
-            <button class="manual-btn">Produce</button>
-
-            <!-- Primary Systems -->
-             <div class="primary-systems-container">
-
-             </div>
-        </div>
-
-    </div>
-    
-    <script type="module" src="/src/logic/ui.ts"></script>
-    <script type="module" src="/src/logic/core.ts"></script>
-    <script type="module" src="/src/logic/state.ts"></script>
-  </body>
+        <script type="module" src="/src/logic/ui.ts"></script>
+        <script type="module" src="/src/logic/core.ts"></script>
+        <script type="module" src="/src/logic/state.ts"></script>
+    </body>
 </html>
