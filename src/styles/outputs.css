@@ -1,0 +1,7 @@
+.outputs {
+    grid-area: output;
+}
+
+.manual-btn {
+    grid-area: manual-btn;
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+     <link rel="stylesheet" href="src/styles/style.css">
+     <link rel="stylesheet" href="src/styles/topbar.css">
+     <link rel="stylesheet" href="src/styles/outputs.css">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+      <script src="https://example.com/fontawesome/v7.0.1/js/fontawesome.js" data-auto-replace-svg="nest"></script>
+      <script src="https://example.com/fontawesome/v7.0.1/js/solid.js"></script>
+    <title>Likely Broken</title>
+  </head>
+  <body>
+    <div class="container">
+        <!-- TopBar -->
+        <div id="top-bar">
+            <p class="title">
+                <span class="word likely">LIKELY</span>
+                <span class="word broken">BROKEN</span>
+            </p>
+            <div class="menu">
+                <i class="fa-solid fa-angle-down"></i>
+                <button id="temp-reset">RESET</button>
+            </div>
+            <div class="info">
+                <p id="system-name">&lt;system-name&gt;</p>
+                <p id="version">&lt;version&gt;</p>
+                <p id="time">&lt;time&gt;</p>
+                <p id="stability-level">&lt;instability&gt;</p>
+            </div>
+        </div>
+
+        <!-- Outputs -->
+        <div class="outputs">
+            <p id="operations">Operations: <span class="value">0</span></p>
+        </div>
+
+        <!-- Manual Button -->
+        <button class="manual-btn">Produce</button>
+
+    </div>
+    
+    <script type="module" src="/src/logic/ui.ts"></script>
+    <script type="module" src="/src/logic/core.ts"></script>
+    <script type="module" src="/src/logic/state.ts"></script>
+  </body>
+</html>
