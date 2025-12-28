@@ -22,5 +22,6 @@ export interface TraitView {
 }
 
 export interface AddSystemView {
-    cost: string
+    cost: string,
+    affordable: boolean
 }

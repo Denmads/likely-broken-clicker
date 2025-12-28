@@ -143,16 +143,16 @@ export class GameLoop {
 
         GameLoop.updateUI();
     }
+
+    (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.value.toFormattedString();
+    (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perSecond.toFormattedString();
+
+    (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(GameState.state.meta.time)
   }
 
   static updateUI() {
         renderSystems(GameState.state);
         renderSystemPickDialog(GameState.state);
-
-        (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.value.toFormattedString();
-        (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perSecond.toFormattedString();
-
-        (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(GameState.state.meta.time)
   }
 
   // Global event emitter

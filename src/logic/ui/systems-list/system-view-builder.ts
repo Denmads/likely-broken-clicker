@@ -38,6 +38,7 @@ export function buildAddSystemView(
 ): AddSystemView {
 
   return {
-    cost: game.costs.newServiceCost.toFormattedString()
+    cost: game.costs.newServiceCost.toFormattedString(),
+    affordable: game.costs.newServiceCost.compare(game.resources.operations.value) != -1
   }
 }

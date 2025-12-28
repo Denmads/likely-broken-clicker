@@ -161,6 +161,8 @@ const el = document.createElement("button")
 }
 
 function updateAddSystemNode(el: HTMLElement, view: AddSystemView) {
+    el.classList.toggle("disabled", !view.affordable)
+
     let costEl: HTMLElement = el.querySelector(".cost-value")!
     costEl.innerText = view.cost
 }
