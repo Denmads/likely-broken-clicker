@@ -2,6 +2,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
 import { LogarithmicValue } from "./logarithmicValue";
 import type { ServiceId, ServiceState, ServiceStateSave } from "./types"
 import { ServiceRegistry } from "./serviceRegistry";
+import { calculateCostLog as calculateCost } from "./calculations";
 
 const GAME_STATE_VERSION = 1
 
@@ -19,6 +20,7 @@ interface GameStateSave {
         operations: {
             value: number | null; // log_10(value)
             perSecond: number | null; // output per tick/sec
+            perClick: number | null;
         }
         instability: {
             value: number | null; // log_10(value)
@@ -60,6 +62,7 @@ export type GameState = {
         operations: {
             value: LogarithmicValue; // log_10(value)
             perSecond: LogarithmicValue; // output per tick/sec log_10(value)
+            perClick: LogarithmicValue; 
         }
         instability: {
             value: LogarithmicValue; // log_10(value)
@@ -70,7 +73,7 @@ export type GameState = {
     services: ServiceState[],
 
     costs: {
-        newServiceCost: LogarithmicValue
+        baseServiceCost: LogarithmicValue
     },
 
     dialogs: {
@@ -106,7 +109,8 @@ export function saveState() {
         resources: {
             operations: {
                 value: state.resources.operations.value.log10Value,
-                perSecond: state.resources.operations.perSecond.log10Value
+                perSecond: state.resources.operations.perSecond.log10Value,
+                perClick: state.resources.operations.perClick.log10Value
             },
             instability: {
                 value: state.resources.instability.value.log10Value,
@@ -121,7 +125,7 @@ export function saveState() {
             totalOutput: s.totalOutput.log10Value,
         })),
         costs: {
-            newServiceCost: state.costs.newServiceCost.log10Value
+            newServiceCost: state.costs.baseServiceCost.log10Value
         },
 
         dialogs: state.dialogs,
@@ -144,7 +148,8 @@ export function loadState() {
         resources: {
             operations: {
                 value: new LogarithmicValue(parsedState.resources.operations.value),
-                perSecond: new LogarithmicValue(parsedState.resources.operations.perSecond)
+                perSecond: new LogarithmicValue(parsedState.resources.operations.perSecond),
+                perClick: new LogarithmicValue(parsedState.resources.operations.perClick)
             },
             instability: {
                 value: new LogarithmicValue(parsedState.resources.instability.value),
@@ -159,7 +164,7 @@ export function loadState() {
             totalOutput: new LogarithmicValue(s.totalOutput)
         })),
         costs: {
-            newServiceCost: new LogarithmicValue(parsedState.costs.newServiceCost)
+            baseServiceCost: new LogarithmicValue(parsedState.costs.newServiceCost)
         },
 
         dialogs: parsedState.dialogs,
@@ -188,7 +193,8 @@ export function resetState() {
         resources: {
             operations: {
                 value: LogarithmicValue.zero(),
-                perSecond: LogarithmicValue.zero()
+                perSecond: LogarithmicValue.zero(),
+                perClick: LogarithmicValue.fromValue(1)
             },
             instability: {
                 value: LogarithmicValue.zero(),
@@ -197,7 +203,7 @@ export function resetState() {
         },
         services: [],
         costs: {
-            newServiceCost: LogarithmicValue.fromValue(50)
+            baseServiceCost: LogarithmicValue.fromValue(50)
         },
 
         dialogs: {
@@ -229,4 +235,11 @@ export function addService(id: ServiceId) {
         totalOutput: LogarithmicValue.zero(),
         traits: []
     })
+}
+
+export function getCurrentServiceCost(): LogarithmicValue {
+    let baseCost = state.costs.baseServiceCost;
+
+    let n = state.services.length
+    return calculateCost(n, baseCost)
 }

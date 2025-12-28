@@ -10,6 +10,9 @@ export function getServicePickOptions(n: number): ServiceId[] {
     let allowedOptions = Object.keys(ServiceRegistry)
         .filter(val => !existingServices.includes(val))
 
+    if (allowedOptions.length <= n)
+        return allowedOptions;
+
     let options: ServiceId[] = []
     while (options.length < n) {
         let service = allowedOptions[Math.floor(Math.random() * allowedOptions.length)]
@@ -19,6 +22,17 @@ export function getServicePickOptions(n: number): ServiceId[] {
     }
 
     return options
+}
+
+export function getServiceAllowedNumberOfOptions(): number {
+
+    let existingServices = GameState.state.services
+        .map(s => s.definition.id)
+
+    let allowedOptions = Object.keys(ServiceRegistry)
+        .filter(val => !existingServices.includes(val))
+
+    return allowedOptions.length;
 }
 
 export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {

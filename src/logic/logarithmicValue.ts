@@ -46,6 +46,17 @@ export class LogarithmicValue {
         )
     }
 
+    sub(other: LogarithmicValue): LogarithmicValue {
+        if (other.isZero()) return this;
+        
+        if (this.isZero() || other.log10Value! >= this.log10Value! - LOG_EPSILON) {
+            return LogarithmicValue.zero()
+        }
+
+        let diff = other.log10Value! - this.log10Value!
+        return new LogarithmicValue(this.log10Value! + Math.log10(1 - Math.pow(10, diff)))
+    }
+
     mul(value: number) {
         if (this.isZero() || value <= 0) return LogarithmicValue.zero();
         return new LogarithmicValue(this.log! + Math.log10(value))
@@ -67,7 +78,7 @@ export class LogarithmicValue {
 
         if (this.log! < 3) {
             let val = Math.pow(10, this.log!);
-            const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
+            const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0})
             return formatter.format(val)
         }
 

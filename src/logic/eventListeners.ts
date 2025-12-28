@@ -8,11 +8,10 @@ function openSystemPickDialog(event: GameEvent) {
         return;
     }
 
-    if (GameState.state.costs.newServiceCost.compare(GameState.state.resources.operations.value) == -1) {
+    let serviceCost = GameState.getCurrentServiceCost();
+    if (serviceCost.compare(GameState.state.resources.operations.value) == -1) {
         return
     }
-
-    GameState.state.dialogs.systemPick.show = true;
 
     let numOptions = 2;
 
@@ -21,13 +20,23 @@ function openSystemPickDialog(event: GameEvent) {
     if (GameState.state.unlocks.extraSystemOption2)
         numOptions++;
 
-    GameState.state.dialogs.systemPick.options = getServicePickOptions(numOptions)
+    let options = getServicePickOptions(numOptions)
+    
+    if (options.length == 0) {
+        return;
+    }
+
+    GameState.state.dialogs.systemPick.show = true;
+    GameState.state.dialogs.systemPick.options = options
+
+    GameLoop.updateUI();
 }
 GameLoop.registerEventListener("pick-system", openSystemPickDialog)
 
 function deploySystem(event: GameEvent) {
     GameState.addService(event.data!["serviceId"] as string)
 
+    GameState.state.resources.operations.value = GameState.state.resources.operations.value.sub(GameState.getCurrentServiceCost())
     GameState.state.dialogs.systemPick.show = false;
     GameState.state.dialogs.systemPick.options = [];
 

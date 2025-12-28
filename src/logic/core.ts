@@ -32,7 +32,7 @@ export class GameLoop {
 
   addUIEventListeners() {
     (document.querySelector(".manual-btn") as HTMLButtonElement).addEventListener("click", () => {
-        this.game.resources.operations.value = this.game.resources.operations.value.add(LogarithmicValue.fromValue(1))
+        this.game.resources.operations.value = this.game.resources.operations.value.add(this.game.resources.operations.perClick)
     })
   }
 
@@ -146,6 +146,7 @@ export class GameLoop {
 
     (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.value.toFormattedString();
     (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perSecond.toFormattedString();
+    (document.querySelector("#operations-per-click > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perClick.toFormattedString();
 
     (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(GameState.state.meta.time)
   }
