@@ -7,6 +7,7 @@ export type ServiceId = string;
 
 export interface ServiceDefinition {
     id: ServiceId,
+    icon: string,
     displayName: string,
     description: string,
     maxTraits: number,
@@ -31,7 +32,7 @@ export interface ServiceState {
 }
 
 export interface ServiceStateSave {
-    definition: ServiceDefinition,
+    definition: ServiceId,
     outputAdd: number | null,
     outputMul: number | null,
     totalOutput: number | null, //computed
@@ -103,11 +104,17 @@ export type EffectType =
   | "chanceBasedBoost";
 
 export interface GameEvent {
-  type: string
+  type: EventType
   time: number
   source?: EventSource
   data?: Record<string, number | string | boolean>
 }
+
+export type EventType =
+    | "tick"
+    | "system-failure"
+    | "pick-system"
+    | "deploy-system";
 
 export interface EventSource {
   serviceId?: string
@@ -115,3 +122,5 @@ export interface EventSource {
   traitId?: string
   system?: "player" | "engine"
 }
+
+export type GameEventListener = (event: GameEvent) => void

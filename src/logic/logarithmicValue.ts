@@ -1,3 +1,5 @@
+const LOG_EPSILON = 1e-12
+
 export class LogarithmicValue {
 
     static zero(): LogarithmicValue {
@@ -49,6 +51,17 @@ export class LogarithmicValue {
         return new LogarithmicValue(this.log! + Math.log10(value))
     }
 
+    compare(other: LogarithmicValue): number {
+        if (this.isZero() && !other.isZero()) return 1
+        if (!this.isZero() && other.isZero()) return -1
+
+        let diff = Math.abs(this.log10Value! - other.log10Value!)
+        if (diff <= LOG_EPSILON) return 0
+
+        if (this.log10Value! > other.log10Value!) return -1
+        else return 1
+    }
+
     toFormattedString(): string {
         if (this.isZero()) return "0"
 
@@ -72,8 +85,9 @@ export class LogarithmicValue {
         ];
 
         let u = 0;
-        while (this.log! >= 3 && u < units.length - 1) {
-            this.log! -= 3;
+        let logVal = this.log!;
+        while (logVal >= 3 && u < units.length - 1) {
+            logVal -= 3;
             u++;
         }
 

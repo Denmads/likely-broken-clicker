@@ -18,9 +18,9 @@ export const EffectRegistry: Record<EffectType, EffectHandler> = {
   },
 
   onDetach(ctx: EffectContext, params) {
-    if (params.cleanupEvent) {
-      ctx.emitEvent({ type: params.cleanupEvent as string, time: new Date().getTime() });
-    }
+    // if (params.cleanupEvent) {
+    //   ctx.emitEvent({ type: params.cleanupEvent as string, time: new Date().getTime() });
+    // }
   },
 
   // ─────────────────────────────────────────────
@@ -130,7 +130,7 @@ export const EffectRegistry: Record<EffectType, EffectHandler> = {
     }
 
     if (params.emitEvent) {
-      ctx.emitEvent({ type: params.emitEvent as string, time: new Date().getTime() });
+      ctx.emitEvent({ type: "system-failure", time: new Date().getTime() });
     }
 
     if (params.spreadInstability) {

@@ -1,5 +1,7 @@
+import { faL } from "@fortawesome/free-solid-svg-icons";
 import { LogarithmicValue } from "./logarithmicValue";
-import type { ServiceState, ServiceStateSave } from "./types"
+import type { ServiceId, ServiceState, ServiceStateSave } from "./types"
+import { ServiceRegistry } from "./serviceRegistry";
 
 const GAME_STATE_VERSION = 1
 
@@ -24,7 +26,23 @@ interface GameStateSave {
         }
     },
 
-    services: ServiceStateSave[]
+    services: ServiceStateSave[],
+
+    costs: {
+        newServiceCost: number | null
+    },
+
+    dialogs: {
+        systemPick: {
+            show: boolean,
+            options: ServiceId[]
+        }
+    },
+
+    unlocks: {
+        extraSystemOption1: false,
+        extraSystemOption2: false
+    }
 }
 
 
@@ -49,7 +67,23 @@ export type GameState = {
         }
     },
 
-    services: ServiceState[]
+    services: ServiceState[],
+
+    costs: {
+        newServiceCost: LogarithmicValue
+    },
+
+    dialogs: {
+        systemPick: {
+            show: boolean,
+            options: ServiceId[]
+        }
+    },
+
+    unlocks: {
+        extraSystemOption1: false,
+        extraSystemOption2: false
+    }
 }
 
 const SAVE_KEY = "local-save"
@@ -81,10 +115,18 @@ export function saveState() {
         },
         services: state.services.map(s => ({
             ...s,
+            definition: s.definition.id,
             outputAdd: s.outputAdd.log10Value,
             outputMul: s.outputMul.log10Value,
             totalOutput: s.totalOutput.log10Value,
-        }))
+        })),
+        costs: {
+            newServiceCost: state.costs.newServiceCost.log10Value
+        },
+
+        dialogs: state.dialogs,
+
+        unlocks: state.unlocks
     } as GameStateSave))
     console.log("SAVED GAME");
 }
@@ -111,10 +153,17 @@ export function loadState() {
         },
         services: parsedState.services.map(s => ({
             ...s,
+            definition: ServiceRegistry[s.definition],
             outputAdd: new LogarithmicValue(s.outputAdd),
             outputMul: new LogarithmicValue(s.outputMul),
             totalOutput: new LogarithmicValue(s.totalOutput)
-        }))
+        })),
+        costs: {
+            newServiceCost: new LogarithmicValue(parsedState.costs.newServiceCost)
+        },
+
+        dialogs: parsedState.dialogs,
+        unlocks: parsedState.unlocks
     } as GameState
 
 
@@ -126,6 +175,7 @@ function migrateSave(state: GameState): GameState {
 }
 
 export function resetState() {
+    localStorage.removeItem(SAVE_KEY);
     state = {
         meta: {
             version: GAME_STATE_VERSION,
@@ -145,7 +195,38 @@ export function resetState() {
                 perSecond: LogarithmicValue.zero()
             }
         },
-        services: []
+        services: [],
+        costs: {
+            newServiceCost: LogarithmicValue.fromValue(50)
+        },
+
+        dialogs: {
+            systemPick: {
+                show: false,
+                options: []
+            }
+        },
+
+        unlocks: {
+            extraSystemOption1: false,
+            extraSystemOption2: false
+        }
     } as GameState
     saveState();
+}
+
+export function addService(id: ServiceId) {
+    state.services.push({
+        definition: ServiceRegistry[id],
+        activeModifiers: [],
+        downtimePercentageReduction: 0,
+        instabilityAdd: 0,
+        instabilityMul: 0,
+        outputAdd: LogarithmicValue.zero(),
+        outputMul: LogarithmicValue.fromValue(1),
+        totalDowntime: 0,
+        totalInstability: 0,
+        totalOutput: LogarithmicValue.zero(),
+        traits: []
+    })
 }

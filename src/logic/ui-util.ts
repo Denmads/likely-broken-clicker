@@ -1,6 +1,6 @@
 import { library, dom } from '@fortawesome/fontawesome-svg-core'
 import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
-import { resetState } from './state';
+import { resetState, type GameState } from './state';
 import { loop } from './core';
 
 library.add(faAngleDown)
@@ -9,6 +9,7 @@ dom.watch();
 (document.querySelector("#temp-reset") as HTMLButtonElement).addEventListener("click", () => {
     resetState()
     loop.reset()
+    window.location.reload()
 })
 
 export function formatNumber(value: number): string {

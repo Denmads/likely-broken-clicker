@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="src/styles/topbar.css" />
         <link rel="stylesheet" href="src/styles/outputs.css" />
         <link rel="stylesheet" href="src/styles/primary-systems.css" />
+        <link rel="stylesheet" href="src/styles/pick-dialog.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <script
@@ -48,7 +49,7 @@
                             Operations: <span class="value">0</span>
                         </p>
                         <p id="operations-per-second">
-                            Ops/S: <span class="value">0</span>
+                            Operations/s: <span class="value">0</span>
                         </p>
                     </div>
                 </div>
@@ -64,7 +65,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="systems-list">
-                            <div class="system-row">
+                            <!-- <div class="system-row">
                                 <div class="system-icon">⚙</div>
 
                                 <div class="system-main">
@@ -75,6 +76,16 @@
                                         <span class="trait warn"
                                             >RACE CONDITION</span
                                         >
+
+                                        <!- - Available empty slot - ->
+                                        <button class="trait-slot available" title="Add trait">
+                                            +
+                                        </button>
+
+                                        <!- - Disabled empty slot - ->
+                                        <button class="trait-slot disabled" title="System is too unstable">
+                                            +
+                                        </button>
                                     </div>
                                 </div>
 
@@ -119,9 +130,9 @@
                                         <span class="metric-value">87%</span>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
-                            <button class="system-row system-unlock">
+                            <!-- <button class="system-row system-unlock">
                                 <div class="system-icon">+</div>
 
                                 <div class="system-main">
@@ -134,15 +145,154 @@
                                     <span class="cost-label">COST</span>
                                     <span class="cost-value">250K</span>
                                 </div>
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <script type="module" src="/src/logic/ui.ts"></script>
+        <!-- System pick dialog -->
+        <!-- <div class="system-pick-backdrop">
+            <div class="system-pick-dialog">
+                <header class="system-pick-header">
+                    <h2>Choose a New System</h2>
+                    <p>Each system has strengths… and problems.</p>
+                </header>
+
+                <div class="system-pick-grid">
+                    <!- - System Card - ->
+                    <button class="system-card">
+                        <div class="system-card-header">
+                            <div class="system-icon">⚙️</div>
+                            <div class="system-title">
+                                <h3>Hydraulic Press</h3>
+                            </div>
+                        </div>
+
+                        <p class="system-description">
+                            Converts raw force into impressive output. Tends to
+                            leak when ignored.
+                        </p>
+
+                        <ul class="system-stats">
+                            <li>
+                                <span class="label">Base Output</span>
+                                <span class="value">+5/sec</span>
+                            </li>
+                            <li>
+                                <span class="label">Instability</span>
+                                <span class="value high">High</span>
+                            </li>
+                            <li>
+                                <span class="label">Downtime</span>
+                                <span class="value medium">12s</span>
+                            </li>
+                        </ul>
+                    </button>
+
+                    <!- - System Card - ->
+                    <button class="system-card">
+                        <div class="system-card-header">
+                            <div class="system-icon">⚙️</div>
+                            <div class="system-title">
+                                <h3>Hydraulic Press</h3>
+                            </div>
+                        </div>
+
+                        <p class="system-description">
+                            Converts raw force into impressive output. Tends to
+                            leak when ignored.
+                        </p>
+
+                        <ul class="system-stats">
+                            <li>
+                                <span class="label">Base Output</span>
+                                <span class="value">+5/sec</span>
+                            </li>
+                            <li>
+                                <span class="label">Instability</span>
+                                <span class="value high">High</span>
+                            </li>
+                            <li>
+                                <span class="label">Downtime</span>
+                                <span class="value medium">12s</span>
+                            </li>
+                        </ul>
+                    </button>
+
+                    <!- - System Card - ->
+                    <button class="system-card">
+                        <div class="system-card-header">
+                            <div class="system-icon">⚙️</div>
+                            <div class="system-title">
+                                <h3>Hydraulic Press</h3>
+                            </div>
+                        </div>
+
+                        <p class="system-description">
+                            Converts raw force into impressive output. Tends to
+                            leak when ignored.
+                        </p>
+
+                        <ul class="system-stats">
+                            <li>
+                                <span class="label">Base Output</span>
+                                <span class="value">+5/sec</span>
+                            </li>
+                            <li>
+                                <span class="label">Instability</span>
+                                <span class="value high">High</span>
+                            </li>
+                            <li>
+                                <span class="label">Downtime</span>
+                                <span class="value medium">12s</span>
+                            </li>
+                        </ul>
+                    </button>
+
+                    <!- - System Card - ->
+                    <button class="system-card">
+                        <div class="system-card-header">
+                            <div class="system-icon">⚙️</div>
+                            <div class="system-title">
+                                <h3>Hydraulic Press</h3>
+                            </div>
+                        </div>
+
+                        <p class="system-description">
+                            Converts raw force into impressive output. Tends to
+                            leak when ignored.
+                        </p>
+
+                        <ul class="system-stats">
+                            <li>
+                                <span class="label">Base Output</span>
+                                <span class="value">+5/sec</span>
+                            </li>
+                            <li>
+                                <span class="label">Instability</span>
+                                <span class="value high">High</span>
+                            </li>
+                            <li>
+                                <span class="label">Downtime</span>
+                                <span class="value medium">12s</span>
+                            </li>
+                        </ul>
+                    </button>
+
+                    <!- - Duplicate .system-card up to 4 times - ->
+                </div>
+
+                <footer class="system-pick-footer">
+                    <p>Pick wisely. Systems are permanent.</p>
+                </footer>
+            </div>
+        </div> -->
+
+        <script type="module" src="/src/logic/ui-util.ts"></script>
         <script type="module" src="/src/logic/core.ts"></script>
         <script type="module" src="/src/logic/state.ts"></script>
+        <script type="module" src="/src/logic/eventListeners.ts"></script>
     </body>
 </html>

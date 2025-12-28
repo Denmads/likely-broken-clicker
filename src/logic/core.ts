@@ -3,13 +3,19 @@ import { EffectRegistry } from './effectRegistry';
 import { LogarithmicValue } from './logarithmicValue';
 import * as GameState from './state';
 import { TraitRegistry } from './traitRegistry';
-import type { EffectContext, GameEvent } from './types';
-import { formatDuration } from './ui';
+import type { EffectContext, EventType, GameEvent, GameEventListener } from './types';
+import { formatDuration } from './ui-util';
+import { renderSystemPickDialog } from './ui/system-pick-dialog/system-pick-renderer';
+import { renderSystems } from './ui/systems-list/system-renderer';
 
-class GameLoop {
+export class GameLoop {
   private game!: GameState.GameState;
   private lastFrameTime!: number;
   private accumulatedDeltaTime!: number;
+
+  private rerender!: boolean;
+
+  private static eventListeners: {[key in EventType]?: GameEventListener[]} = {}
 
   constructor() {
     GameState.initialize();
@@ -18,6 +24,7 @@ class GameLoop {
   }
 
   reset() {
+    this.rerender = true;
     this.game = GameState.state;
     this.lastFrameTime = performance.now();
     this.accumulatedDeltaTime = 0;
@@ -30,6 +37,8 @@ class GameLoop {
   }
 
   start() {
+    this.rerender = true;
+    this.updateUICheck(0);
     requestAnimationFrame(this.frame.bind(this));
   }
 
@@ -42,7 +51,7 @@ class GameLoop {
     this.simulateTicks(deltaMs);
 
     // Update UI or animations separately
-    this.updateUI(deltaMs);
+    this.updateUICheck(deltaMs);
 
     requestAnimationFrame(this.frame.bind(this));
   }
@@ -68,7 +77,7 @@ class GameLoop {
           
         },
         emitEvent(event) {
-          GameLoop.globalEmitEvent(event, ctx.game);
+          GameLoop.globalEmitEvent(event);
         },
         hasTrait(id: string) {
           return service.traits.includes(id);
@@ -110,6 +119,7 @@ class GameLoop {
 
     // Global tick event
     this.emitEvent({ type: "tick", time: this.game.meta.time });
+    this.rerender = true;
   }
 
   private updateTotalOutput(tickDelta: number) {
@@ -119,26 +129,55 @@ class GameLoop {
 
     let toAdd = this.game.resources.operations.perSecond.mul(tickDelta / 1000)
     this.game.resources.operations.value = this.game.resources.operations.value.add(toAdd)
-
-    console.log(this.game.resources.operations.value.toFormattedString());
   }
 
   private emitEvent(event: GameEvent) {
-    GameLoop.globalEmitEvent(event, this.game);
+    GameLoop.globalEmitEvent(event);
   }
 
-  private updateUI(deltaTime: number) {
+  private updateUICheck(deltaTime: number) {
     // Decoupled UI updates
-    (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = this.game.resources.operations.value.toFormattedString();
-    (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = this.game.resources.operations.perSecond.toFormattedString();
 
-    (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(this.game.meta.time)
+    if (this.rerender) {
+        this.rerender = false;
+
+        GameLoop.updateUI();
+    }
+  }
+
+  static updateUI() {
+        renderSystems(GameState.state);
+        renderSystemPickDialog(GameState.state);
+
+        (document.querySelector("#operations > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.value.toFormattedString();
+        (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perSecond.toFormattedString();
+
+        (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(GameState.state.meta.time)
   }
 
   // Global event emitter
-  static globalEmitEvent(event: GameEvent, game: GameState.GameState) {
+  static globalEmitEvent(event: GameEvent) {
     // Could notify all traits or global systems
     console.log("Global Event:", event.type, event.time.toFixed(1));
+
+    let listeners = this.eventListeners[event.type]
+
+    if (!listeners) {
+        this.eventListeners[event.type] = []
+        return;
+    }
+
+    if (listeners.length > 0) {
+        listeners.forEach(listener => listener(event))
+    }
+  }
+
+  static registerEventListener(type: EventType, callback: GameEventListener) {
+    if (!this.eventListeners[type]) {
+        this.eventListeners[type] = []
+    }
+
+    this.eventListeners[type].push(callback)
   }
 }
 
