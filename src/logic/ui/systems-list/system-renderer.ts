@@ -120,11 +120,44 @@ function renderTraits(container: HTMLElement, view: SystemView) {
     container.appendChild(el)
   }
 
-  if (view.addTrait.show) {
-    let addTraitEl = document.createElement("button")
-    addTraitEl.classList.toggle("disabled", view.addTrait.disable)
 
-    container.appendChild(addTraitEl)
+  let addBtn = existing.get("add-trait")!
+  if (view.addTrait.show) {
+    if (!addBtn) {
+        let addTraitEl = document.createElement("button")
+        addTraitEl.classList.add("trait-slot")
+        addTraitEl.title = "Add Trait"
+        addTraitEl.dataset.id = "add-trait"
+        addTraitEl.dataset.registered = "false"
+        container.appendChild(addTraitEl)
+        addBtn = addTraitEl
+    }
+
+    addBtn.classList.toggle("available", !view.addTrait.disable)
+    addBtn.classList.toggle("disabled", view.addTrait.disable)
+
+    function onClick() {
+        GameLoop.globalEmitEvent({
+            type: "add-trait",
+            time: performance.now(),
+            source: {
+                system: "player",
+                serviceId: view.id
+            },
+            data: {
+                service: view.id
+            }
+        })
+    }
+
+    if (!view.addTrait.disable && addBtn.dataset.registered == "false") {
+        addBtn.addEventListener("click", onClick)
+        addBtn.dataset.registered = "true"
+    }
+    else if (view.addTrait.disable && addBtn.dataset.registered == "true") {
+        addBtn.removeEventListener("click", onClick)
+        addBtn.dataset.registered = "false"
+    }
   }
 }
 

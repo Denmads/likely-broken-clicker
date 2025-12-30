@@ -61,14 +61,27 @@ export interface TraitDefinition {
   effects: TraitEffectDefinition[];
 }
 
+// export interface TraitEffectDefinitionOld {
+//   type: EffectType;
+//   params: Record<string, number | string | boolean>;
+// }
+
 export interface TraitEffectDefinition {
-  type: EffectType;
-  params: Record<string, number | string | boolean>;
+  trigger: EffectTriggerType[];
+  action: EffectHandler;
 }
 
+export type EffectTriggerType =
+  | "onAttach"
+  | "onDetach"
+  | "onTick"
+  | "onSelfFailure"
+  | "onOtherFailure";
+
+
+
 export type EffectHandler = (
-  ctx: EffectContext,
-  params: any
+  ctx: EffectContext
 ) => void;
 
 export interface EffectContext {
@@ -89,19 +102,19 @@ export interface Modifier {
   source: TraitId;
 }
 
-export type EffectType =
-  | "onAttach"
-  | "onDetach"
-  | "onTick"
-  | "outputMultiplier"
-  | "outputAdditive"
-  | "instabilityAdditive"
-  | "instabilityOverTime"
-  | "instabilityMultiplier"
-  | "onFailure"
-  | "onOtherServiceFailure"
-  | "suppressTraitTag"
-  | "chanceBasedBoost";
+// export type EffectType =
+//   | "onAttach"
+//   | "onDetach"
+//   | "onTick"
+//   | "outputMultiplier"
+//   | "outputAdditive"
+//   | "instabilityAdditive"
+//   | "instabilityOverTime"
+//   | "instabilityMultiplier"
+//   | "onFailure"
+//   | "onOtherServiceFailure"
+//   | "suppressTraitTag"
+//   | "chanceBasedBoost";
 
 export interface GameEvent {
   type: EventType
@@ -114,7 +127,8 @@ export type EventType =
     | "tick"
     | "system-failure"
     | "pick-system"
-    | "deploy-system";
+    | "deploy-system"
+    | "add-trait";
 
 export interface EventSource {
   serviceId?: string

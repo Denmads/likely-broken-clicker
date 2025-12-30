@@ -42,8 +42,9 @@ interface GameStateSave {
     },
 
     unlocks: {
-        extraSystemOption1: false,
-        extraSystemOption2: false
+        extraSystemOption1: boolean,
+        extraSystemOption2: boolean,
+        manualTraitChoice: boolean
     }
 }
 
@@ -84,8 +85,9 @@ export type GameState = {
     },
 
     unlocks: {
-        extraSystemOption1: false,
-        extraSystemOption2: false
+        extraSystemOption1: boolean,
+        extraSystemOption2: boolean,
+        manualTraitChoice: boolean
     }
 }
 
@@ -215,7 +217,8 @@ export function resetState() {
 
         unlocks: {
             extraSystemOption1: false,
-            extraSystemOption2: false
+            extraSystemOption2: false,
+            manualTraitChoice: false
         }
     } as GameState
     saveState();
