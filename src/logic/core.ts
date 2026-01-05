@@ -1,5 +1,5 @@
 import { calculateServicedownTime, calculateServiceInstability, calculateServiceOutput } from './calculations';
-import { EffectRegistry } from './effectRegistry';
+// import { EffectRegistry } from './effectRegistry';
 import { LogarithmicValue } from './logarithmicValue';
 import * as GameState from './state';
 import { TraitRegistry } from './traitRegistry';
@@ -93,11 +93,11 @@ export class GameLoop {
         
         
         for (const effect of traitDef.effects) {
-            if (effect.type == "onTick")
-                EffectRegistry["onTick"](ctx, effect)
-        //   if (effect.type === "onTick" || effect.type === "outputAdditive" || effect.type === "instabilityAdditive") {
-        //     EffectRegistry.apply(effect, ctx); // assumes you have EffectRegistry with apply()
-        //   }
+            // if (effect.type == "onTick")
+            //     EffectRegistry["onTick"](ctx, effect)
+            //   if (effect.type === "onTick" || effect.type === "outputAdditive" || effect.type === "instabilityAdditive") {
+            //     EffectRegistry.apply(effect, ctx); // assumes you have EffectRegistry with apply()
+            //   }
         }
 
         // Trait can listen to tick event
