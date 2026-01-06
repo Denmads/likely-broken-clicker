@@ -2,6 +2,7 @@ import { GameLoop } from "./core";
 import type { GameEvent } from "./types";
 import * as GameState from './state';
 import { getServicePickOptions } from "./serviceRegistry";
+import { getTraitPickOptionsForService } from "./traitRegistry";
 
 function openSystemPickDialog(event: GameEvent) {
     if (GameState.state.dialogs.systemPick.show) {
@@ -34,7 +35,7 @@ function openSystemPickDialog(event: GameEvent) {
 GameLoop.registerEventListener("pick-system", openSystemPickDialog)
 
 function deploySystem(event: GameEvent) {
-    GameState.addService(event.data!["serviceId"] as string)
+    GameState.addService(event.data!["serviceId"] as string, GameState.getCurrentServiceCost())
 
     GameState.state.resources.operations.value = GameState.state.resources.operations.value.sub(GameState.getCurrentServiceCost())
     GameState.state.dialogs.systemPick.show = false;
@@ -43,3 +44,23 @@ function deploySystem(event: GameEvent) {
     GameLoop.updateUI();
 }
 GameLoop.registerEventListener("deploy-system", deploySystem)
+
+function addTrait(event: GameEvent) {
+    let serviceId = event.data!["serviceId"] as string
+
+    let options = getTraitPickOptionsForService(serviceId)
+    if (options.length == 0) {
+        return
+    } 
+
+    if (GameState.state.unlocks.manualTraitChoice) {
+
+    }
+    else {
+        let option = options[Math.floor(Math.random() * options.length)]
+
+        GameState.addTrait(serviceId, option)
+        GameLoop.updateUI();
+    }
+}
+GameLoop.registerEventListener("add-trait", addTrait)

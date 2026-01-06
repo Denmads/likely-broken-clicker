@@ -19,6 +19,7 @@ export interface ServiceDefinition {
 
 export interface ServiceState {
     definition: ServiceDefinition,
+    purchaseCost: LogarithmicValue,
     outputAdd: LogarithmicValue,
     outputMul: LogarithmicValue,
     totalOutput: LogarithmicValue, //computed
@@ -33,6 +34,7 @@ export interface ServiceState {
 
 export interface ServiceStateSave {
     definition: ServiceId,
+    purchaseCost: number | null,
     outputAdd: number | null,
     outputMul: number | null,
     totalOutput: number | null, //computed
@@ -55,8 +57,6 @@ export interface TraitDefinition {
 
     rarity: "common" | "uncommon" | "rare" | "cursed";
     tags: TraitTag[];
-
-    maxStacks?: number;
 
   effects: TraitEffectDefinition[];
 }

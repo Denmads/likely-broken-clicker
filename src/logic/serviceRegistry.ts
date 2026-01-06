@@ -3,12 +3,7 @@ import * as GameState from './state';
 import { LogarithmicValue } from "./logarithmicValue";
 
 export function getServicePickOptions(n: number): ServiceId[] {
-
-    let existingServices = GameState.state.services
-        .map(s => s.definition.id)
-
-    let allowedOptions = Object.keys(ServiceRegistry)
-        .filter(val => !existingServices.includes(val))
+    let allowedOptions = getServiceAllowedOptions();
 
     if (allowedOptions.length <= n)
         return allowedOptions;
@@ -24,7 +19,7 @@ export function getServicePickOptions(n: number): ServiceId[] {
     return options
 }
 
-export function getServiceAllowedNumberOfOptions(): number {
+export function getServiceAllowedOptions(): ServiceId[] {
 
     let existingServices = GameState.state.services
         .map(s => s.definition.id)
@@ -32,7 +27,7 @@ export function getServiceAllowedNumberOfOptions(): number {
     let allowedOptions = Object.keys(ServiceRegistry)
         .filter(val => !existingServices.includes(val))
 
-    return allowedOptions.length;
+    return allowedOptions;
 }
 
 export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
@@ -45,7 +40,11 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(12),
     baseInstability: 0.15,
     baseDowntime: 0.05,
-    availableTraits: []
+    availableTraits: [
+        "overclocked_turbines",
+        "improvised_fuel_mix",
+        "self_igniting_coils"
+    ]
   },
   "data_server": {
     id: "data_server",
@@ -56,7 +55,11 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(18),
     baseInstability: 0.2,
     baseDowntime: 0.08,
-    availableTraits: []
+    availableTraits: [
+        "redundant_arrays",
+        "aggressive_caching",
+        "haunted_storage_blocks"
+    ]
   },
   "cooling_system": {
     id: "cooling_system",
@@ -67,7 +70,10 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(6),
     baseInstability: 0.1,
     baseDowntime: 0.03,
-    availableTraits: []
+    availableTraits: [
+        "industrial_fans",
+        "liquid_cooling_leaks"
+    ]
   },
   "network_hub": {
     id: "network_hub",
@@ -78,7 +84,11 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(14),
     baseInstability: 0.18,
     baseDowntime: 0.06,
-    availableTraits: []
+    availableTraits: [
+        "packet_prioritization",
+        "mesh_routing",
+        "quantum_tunneling"
+    ]
   },
   "backup_array": {
     id: "backup_array",
@@ -89,7 +99,10 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(8),
     baseInstability: 0.12,
     baseDowntime: 0.04,
-    availableTraits: []
+    availableTraits: [
+        "incremental_backups",
+        "recursive_backups"
+    ]
   },
   "monitoring_console": {
     id: "monitoring_console",
@@ -100,6 +113,10 @@ export const ServiceRegistry: Record<ServiceId, ServiceDefinition> = {
     baseOutput: LogarithmicValue.fromValue(10),
     baseInstability: 0.09,
     baseDowntime: 0.02,
-    availableTraits: []
+    availableTraits: [
+        "real_time_metrics",
+        "predictive_alerts",
+        "confidence_meter"
+    ]
   }
 }

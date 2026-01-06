@@ -111,10 +111,10 @@ textarea:not([rows]) {
 
     display: grid;
     grid-template-columns: minmax(auto, 20%) auto;
-    grid-template-rows: repeat(auto, 4);
+    grid-template-rows: auto min-content repeat(auto, 2);
     grid-template-areas: 
         "output primary"
-        "manual-btn subsystems"
+        "manual-btn primary"
         "log log"
         "hotfixes debug";
 

@@ -12,6 +12,7 @@ export interface SystemView {
   addTrait: {
     show: boolean
     disable: boolean
+    cost: string
   }
 }
 

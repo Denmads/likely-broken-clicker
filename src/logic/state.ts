@@ -1,8 +1,8 @@
 import { faL } from "@fortawesome/free-solid-svg-icons";
 import { LogarithmicValue } from "./logarithmicValue";
-import type { ServiceId, ServiceState, ServiceStateSave } from "./types"
+import type { ServiceId, ServiceState, ServiceStateSave, TraitId } from "./types"
 import { ServiceRegistry } from "./serviceRegistry";
-import { calculateCostLog as calculateCost } from "./calculations";
+import { calculateServiceCost as calculateServiceCost, calculateTraitCost } from "./calculations";
 
 const GAME_STATE_VERSION = 1
 
@@ -122,6 +122,7 @@ export function saveState() {
         services: state.services.map(s => ({
             ...s,
             definition: s.definition.id,
+            purchaseCost: s.purchaseCost.log10Value,
             outputAdd: s.outputAdd.log10Value,
             outputMul: s.outputMul.log10Value,
             totalOutput: s.totalOutput.log10Value,
@@ -161,6 +162,7 @@ export function loadState() {
         services: parsedState.services.map(s => ({
             ...s,
             definition: ServiceRegistry[s.definition],
+            purchaseCost: new LogarithmicValue(s.purchaseCost),
             outputAdd: new LogarithmicValue(s.outputAdd),
             outputMul: new LogarithmicValue(s.outputMul),
             totalOutput: new LogarithmicValue(s.totalOutput)
@@ -186,7 +188,7 @@ export function resetState() {
     state = {
         meta: {
             version: GAME_STATE_VERSION,
-            createdAt: performance.now(),
+            createdAt: new Date().getTime(),
             time: 0,
             lastSave: -1,
             lastTickTime: -1,
@@ -224,9 +226,10 @@ export function resetState() {
     saveState();
 }
 
-export function addService(id: ServiceId) {
+export function addService(id: ServiceId, cost: LogarithmicValue) {
     state.services.push({
         definition: ServiceRegistry[id],
+        purchaseCost: cost,
         activeModifiers: [],
         downtimePercentageReduction: 0,
         instabilityAdd: 0,
@@ -240,9 +243,21 @@ export function addService(id: ServiceId) {
     })
 }
 
+export function addTrait(serviceId: ServiceId, traitId: TraitId) {
+    let service = state.services.find(s => s.definition.id == serviceId)!
+    service.traits.push(traitId);
+}
+
 export function getCurrentServiceCost(): LogarithmicValue {
     let baseCost = state.costs.baseServiceCost;
 
     let n = state.services.length
-    return calculateCost(n, baseCost)
+    return calculateServiceCost(n, baseCost)
+}
+
+export function getCurrentTraitCostForService(id: ServiceId): LogarithmicValue {
+    let serviceState = state.services.find(s => s.definition.id == id)!
+
+    let n = serviceState.traits.length;
+    return calculateTraitCost(n, serviceState.purchaseCost.mul(0.7), serviceState.totalInstability)
 }
