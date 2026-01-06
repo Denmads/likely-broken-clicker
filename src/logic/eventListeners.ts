@@ -53,6 +53,8 @@ function addTrait(event: GameEvent) {
         return
     } 
 
+    GameState.state.resources.operations.value = GameState.state.resources.operations.value.sub(GameState.getCurrentTraitCostForService(serviceId))
+
     if (GameState.state.unlocks.manualTraitChoice) {
 
     }
