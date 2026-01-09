@@ -69,40 +69,16 @@ export class GameLoop {
     this.game.meta.lastTickTime = this.lastFrameTime
 
     for (const service of this.game.services) {
-      const ctx: EffectContext = {
-        service,
-        game: this.game,
-        deltaTime: tickDelta,
-        addModifier(mod) {
-          
-        },
-        emitEvent(event) {
-          GameLoop.globalEmitEvent(event);
-        },
-        hasTrait(id: string) {
-          return service.traits.includes(id);
-        },
-        instability() {
-          return service.totalInstability;
-        }
-      };
+
+        let ctx = GameState.createEffectContext(service)
 
       for (const traitId of service.traits) {
         const traitDef = TraitRegistry[traitId];
         if (!traitDef) continue;
         
-        
-        for (const effect of traitDef.effects) {
-            // if (effect.type == "onTick")
-            //     EffectRegistry["onTick"](ctx, effect)
-            //   if (effect.type === "onTick" || effect.type === "outputAdditive" || effect.type === "instabilityAdditive") {
-            //     EffectRegistry.apply(effect, ctx); // assumes you have EffectRegistry with apply()
-            //   }
+        if ("onTick" in traitDef.effects) {
+            traitDef.effects["onTick"]!(ctx)
         }
-
-        // Trait can listen to tick event
-        // Assuming traits can have onEvent hooks
-        // traitDef.onEvent?.({ type: "tick", time: this.game.meta.time, source: { serviceId: service.definition.id }, data: { delta: tickDelta } }, ctx);
       }
 
       service.totalOutput = calculateServiceOutput(service)

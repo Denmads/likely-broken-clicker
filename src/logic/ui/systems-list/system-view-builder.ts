@@ -17,7 +17,7 @@ export function buildSystemView(
     icon: service.definition.icon,
 
     outputText: service.totalOutput.toFormattedString(),
-    instabilityPercent: 50,
+    instabilityPercent: service.totalInstability,
     instabilityState: "ok",
 
     traits: service.traits.map(id => ({

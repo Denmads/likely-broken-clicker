@@ -20,13 +20,8 @@ export interface ServiceDefinition {
 export interface ServiceState {
     definition: ServiceDefinition,
     purchaseCost: LogarithmicValue,
-    outputAdd: LogarithmicValue,
-    outputMul: LogarithmicValue,
     totalOutput: LogarithmicValue, //computed
-    instabilityAdd: number,
-    instabilityMul: number,
     totalInstability: number, //computed
-    downtimePercentageReduction:number,
     totalDowntime: number, //computed
     activeModifiers: Modifier[],
     traits: TraitId[]
@@ -58,7 +53,7 @@ export interface TraitDefinition {
     rarity: "common" | "uncommon" | "rare" | "cursed";
     tags: TraitTag[];
 
-  effects: TraitEffectDefinition[];
+  effects: { [key in EffectTriggerType]?: EffectHandler };
 }
 
 // export interface TraitEffectDefinitionOld {
@@ -66,10 +61,10 @@ export interface TraitDefinition {
 //   params: Record<string, number | string | boolean>;
 // }
 
-export interface TraitEffectDefinition {
-  trigger: EffectTriggerType[];
-  action: EffectHandler;
-}
+// export interface TraitEffectDefinition {
+//   trigger: EffectTriggerType[];
+//   action: EffectHandler;
+// }
 
 export type EffectTriggerType =
   | "onAttach"
@@ -86,19 +81,15 @@ export type EffectHandler = (
 
 export interface EffectContext {
   service: ServiceState;
-  game: GameState;
-  deltaTime: number;
+  state: GameState;
 
   addModifier(mod: Modifier): void;
-  emitEvent(event: GameEvent): void;
-  hasTrait(id: string): boolean;
-  instability(): number;
 }
 
 export interface Modifier {
   target: "output" | "instability" | "cooldown";
   type: "add" | "mul";
-  value: number;
+  value: LogarithmicValue;
   source: TraitId;
 }
 

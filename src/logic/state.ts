@@ -1,8 +1,8 @@
-import { faL } from "@fortawesome/free-solid-svg-icons";
 import { LogarithmicValue } from "./logarithmicValue";
-import type { ServiceId, ServiceState, ServiceStateSave, TraitId } from "./types"
+import type { EffectContext, Modifier, ServiceId, ServiceState, ServiceStateSave, TraitId } from "./types"
 import { ServiceRegistry } from "./serviceRegistry";
 import { calculateServiceCost as calculateServiceCost, calculateTraitCost } from "./calculations";
+import { TraitRegistry } from "./traitRegistry";
 
 const GAME_STATE_VERSION = 1
 
@@ -123,8 +123,6 @@ export function saveState() {
             ...s,
             definition: s.definition.id,
             purchaseCost: s.purchaseCost.log10Value,
-            outputAdd: s.outputAdd.log10Value,
-            outputMul: s.outputMul.log10Value,
             totalOutput: s.totalOutput.log10Value,
         })),
         costs: {
@@ -163,8 +161,6 @@ export function loadState() {
             ...s,
             definition: ServiceRegistry[s.definition],
             purchaseCost: new LogarithmicValue(s.purchaseCost),
-            outputAdd: new LogarithmicValue(s.outputAdd),
-            outputMul: new LogarithmicValue(s.outputMul),
             totalOutput: new LogarithmicValue(s.totalOutput)
         })),
         costs: {
@@ -231,11 +227,6 @@ export function addService(id: ServiceId, cost: LogarithmicValue) {
         definition: ServiceRegistry[id],
         purchaseCost: cost,
         activeModifiers: [],
-        downtimePercentageReduction: 0,
-        instabilityAdd: 0,
-        instabilityMul: 0,
-        outputAdd: LogarithmicValue.zero(),
-        outputMul: LogarithmicValue.fromValue(1),
         totalDowntime: 0,
         totalInstability: 0,
         totalOutput: LogarithmicValue.zero(),
@@ -246,6 +237,13 @@ export function addService(id: ServiceId, cost: LogarithmicValue) {
 export function addTrait(serviceId: ServiceId, traitId: TraitId) {
     let service = state.services.find(s => s.definition.id == serviceId)!
     service.traits.push(traitId);
+
+    var traitDefinition = TraitRegistry[traitId]
+    
+    if ("onAttach" in traitDefinition.effects) {
+        var context = createEffectContext(service)
+        traitDefinition.effects["onAttach"]!(context)
+    }
 }
 
 export function getCurrentServiceCost(): LogarithmicValue {
@@ -260,4 +258,12 @@ export function getCurrentTraitCostForService(id: ServiceId): LogarithmicValue {
 
     let n = serviceState.traits.length;
     return calculateTraitCost(n, serviceState.purchaseCost.mul(0.7), serviceState.totalInstability)
+}
+
+export function createEffectContext(service: ServiceState): EffectContext {
+    return {
+        service,
+        state,
+        addModifier: (mod) => service.activeModifiers.push(mod)
+    }
 }

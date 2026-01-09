@@ -56,7 +56,7 @@ function addTrait(event: GameEvent) {
     GameState.state.resources.operations.value = GameState.state.resources.operations.value.sub(GameState.getCurrentTraitCostForService(serviceId))
 
     if (GameState.state.unlocks.manualTraitChoice) {
-
+        // TODO: Implement
     }
     else {
         let option = options[Math.floor(Math.random() * options.length)]
