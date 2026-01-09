@@ -12,10 +12,14 @@ dom.watch();
     window.location.reload()
 })
 
+export function toFixedDecimals(val: number, n: number): string {
+    const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: n})
+    return formatter.format(val)
+}
+
 export function formatNumber(value: number): string {
   if (value < 1000) {
-        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
-        return formatter.format(value)
+        return toFixedDecimals(value, 2)
   }
 
   const units = [
@@ -37,8 +41,7 @@ export function formatNumber(value: number): string {
     u++;
   }
 
-  const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
-  return `${formatter.format(value)}${units[u]}`;
+  return `${toFixedDecimals(value, 2)}${units[u]}`;
 }
 
 export function formatDuration(seconds: number) {

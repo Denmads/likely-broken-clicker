@@ -1,3 +1,5 @@
+import { toFixedDecimals } from "./ui-util";
+
 const LOG_EPSILON = 1e-12
 
 export class LogarithmicValue {
@@ -78,8 +80,7 @@ export class LogarithmicValue {
 
         if (this.log! < 3) {
             let val = Math.pow(10, this.log!);
-            const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0})
-            return formatter.format(val)
+            return toFixedDecimals(val, 0)
         }
 
         const units = [
@@ -103,8 +104,6 @@ export class LogarithmicValue {
         }
 
         let val = Math.pow(10, this.log! % 3);
-
-        const formatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2})
-        return `${formatter.format(val)}${units[u]}`;
+        return `${toFixedDecimals(val, 2)}${units[u]}`;
     }
 }
