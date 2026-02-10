@@ -2,6 +2,7 @@ import { GameLoop } from "../../core";
 import type { GameState } from "../../state"
 import type { AddSystemView, SystemView } from "./system-view"
 import { buildAddSystemView, buildSystemView } from "./system-view-builder"
+import { isUiLocked } from "../ui-lock";
 
 const systemNodes = new Map<string, HTMLElement>()
 let addSystemNode: HTMLElement | undefined;
@@ -122,40 +123,37 @@ function renderTraits(container: HTMLElement, view: SystemView) {
 
 
     if (view.addTrait.show) {
-        let addBtn = document.createElement("button")
-        addBtn.classList.add("trait-slot")
-        addBtn.title = `Add Trait (${view.addTrait.cost} Ops)`
-        addBtn.innerText = "+"
-        addBtn.dataset.id = "add-trait"
-        addBtn.dataset.registered = "false"
-        container.appendChild(addBtn)
+      let addBtn = document.createElement("button")
+      addBtn.classList.add("trait-slot")
+      addBtn.title = `Add Trait (${view.addTrait.cost} Ops)`
+      addBtn.innerText = "+"
+      addBtn.dataset.id = "add-trait"
+      container.appendChild(addBtn)
 
-        addBtn.classList.toggle("available", !view.addTrait.disable)
-        addBtn.classList.toggle("disabled", view.addTrait.disable)
+      const disableTrait = view.addTrait.disable || isUiLocked();
+      addBtn.classList.toggle("available", !disableTrait)
+      addBtn.classList.toggle("disabled", disableTrait)
+      addBtn.disabled = disableTrait;
 
-        function onClick() {
-            GameLoop.globalEmitEvent({
-                type: "add-trait",
-                time: performance.now(),
-                source: {
-                    system: "player",
-                    serviceId: view.id
-                },
-                data: {
-                    serviceId: view.id
-                }
-            })
+      if (!disableTrait) {
+        addBtn.onclick = () => {
+          GameLoop.globalEmitEvent({
+            type: "add-trait",
+            time: performance.now(),
+            source: {
+              system: "player",
+              serviceId: view.id
+            },
+            data: {
+              serviceId: view.id
+            }
+          })
         }
-
-        if (!view.addTrait.disable && addBtn.dataset.registered == "false") {
-            addBtn.addEventListener("click", onClick)
-            addBtn.dataset.registered = "true"
-        }
-        else if (view.addTrait.disable && addBtn.dataset.registered == "true") {
-            addBtn.removeEventListener("click", onClick)
-            addBtn.dataset.registered = "false"
-        }
-  }
+      }
+      else {
+        addBtn.onclick = null;
+      }
+    }
 }
 
 function createAddSystemNode(): HTMLElement {
@@ -178,6 +176,14 @@ const el = document.createElement("button")
   `
 
   el.addEventListener("click", () => {
+    if (isUiLocked()) {
+      return;
+    }
+
+    if (el.classList.contains("disabled")) {
+      return;
+    }
+
     GameLoop.globalEmitEvent({
         type: "pick-system",
         time: performance.now(),
@@ -191,7 +197,9 @@ const el = document.createElement("button")
 }
 
 function updateAddSystemNode(el: HTMLElement, view: AddSystemView) {
-    el.classList.toggle("disabled", !view.affordable)
+  const disableUnlock = !view.affordable || isUiLocked();
+  el.classList.toggle("disabled", disableUnlock)
+  ;(el as HTMLButtonElement).disabled = disableUnlock;
 
     let costEl: HTMLElement = el.querySelector(".cost-value")!
     costEl.innerText = view.cost

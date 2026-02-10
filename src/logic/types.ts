@@ -38,12 +38,19 @@ export interface ServiceStateSave {
     totalInstability: number, //computed
     downtimePercentageReduction:number,
     totalDowntime: number, //computed
-    activeModifiers: Modifier[],
+  activeModifiers: ModifierSave[],
     traits: TraitId[]
 }
 
 export type TraitId = string;
 export type TraitTag = string;
+
+export interface LogEntry {
+  time: number;
+  text: string;
+}
+
+export const MAX_LOG_ENTRIES = 200;
 
 export interface TraitDefinition {
     id: TraitId;
@@ -90,6 +97,13 @@ export interface Modifier {
   target: "output" | "instability" | "cooldown";
   type: "add" | "mul";
   value: LogarithmicValue;
+  source: TraitId;
+}
+
+export interface ModifierSave {
+  target: "output" | "instability" | "cooldown";
+  type: "add" | "mul";
+  value: number | null;
   source: TraitId;
 }
 

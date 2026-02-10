@@ -5,8 +5,10 @@ import * as GameState from './state';
 import { TraitRegistry } from './traitRegistry';
 import type { EffectContext, EventType, GameEvent, GameEventListener } from './types';
 import { formatDuration } from './ui-util';
+import { renderConsoleLog, startBootSequenceIfNeeded } from './ui/console-log/console-log';
 import { renderSystemPickDialog } from './ui/system-pick-dialog/system-pick-renderer';
 import { renderSystems } from './ui/systems-list/system-renderer';
+import { isUiLocked, onUiLockChange } from './ui/ui-lock';
 
 export class GameLoop {
   private game!: GameState.GameState;
@@ -21,6 +23,9 @@ export class GameLoop {
     GameState.initialize();
     this.reset()
     this.addUIEventListeners()
+    onUiLockChange(() => {
+        this.rerender = true;
+    })
   }
 
   reset() {
@@ -32,6 +37,9 @@ export class GameLoop {
 
   addUIEventListeners() {
     (document.querySelector(".manual-btn") as HTMLButtonElement).addEventListener("click", () => {
+        if (isUiLocked()) {
+            return;
+        }
         this.game.resources.operations.value = this.game.resources.operations.value.add(this.game.resources.operations.perClick)
     })
   }
@@ -39,6 +47,7 @@ export class GameLoop {
   start() {
     this.rerender = true;
     this.updateUICheck(0);
+    startBootSequenceIfNeeded();
     requestAnimationFrame(this.frame.bind(this));
   }
 
@@ -124,12 +133,17 @@ export class GameLoop {
     (document.querySelector("#operations-per-second > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perSecond.toFormattedString();
     (document.querySelector("#operations-per-click > .value") as HTMLSpanElement).innerText = GameState.state.resources.operations.perClick.toFormattedString();
 
+    const manualBtn = document.querySelector(".manual-btn") as HTMLButtonElement;
+    manualBtn.disabled = isUiLocked();
+    manualBtn.classList.toggle("disabled", isUiLocked());
+
     (document.querySelector(".info > #time") as HTMLParagraphElement).innerText = formatDuration(GameState.state.meta.time)
   }
 
   static updateUI() {
         renderSystems(GameState.state);
         renderSystemPickDialog(GameState.state);
+      renderConsoleLog();
   }
 
   // Global event emitter

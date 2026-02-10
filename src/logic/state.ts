@@ -1,5 +1,6 @@
 import { LogarithmicValue } from "./logarithmicValue";
-import type { EffectContext, Modifier, ServiceId, ServiceState, ServiceStateSave, TraitId } from "./types"
+import type { EffectContext, LogEntry, Modifier, ModifierSave, ServiceId, ServiceState, ServiceStateSave, TraitId } from "./types"
+import { MAX_LOG_ENTRIES } from "./types";
 import { ServiceRegistry } from "./serviceRegistry";
 import { calculateServiceCost as calculateServiceCost, calculateTraitCost } from "./calculations";
 import { TraitRegistry } from "./traitRegistry";
@@ -14,6 +15,7 @@ interface GameStateSave {
         time: number; // seconds since start
         lastTickTime: number; // timestamp of last tick
         tickRate: number; // seconds per tick
+        bootCompleted: boolean;
     },
 
     resources: {
@@ -45,7 +47,9 @@ interface GameStateSave {
         extraSystemOption1: boolean,
         extraSystemOption2: boolean,
         manualTraitChoice: boolean
-    }
+    },
+
+    logs?: LogEntry[]
 }
 
 
@@ -57,6 +61,7 @@ export type GameState = {
         time: number; // seconds since start
         lastTickTime: number; // timestamp of last tick
         tickRate: number; // seconds per tick
+        bootCompleted: boolean;
     },
 
     resources: {
@@ -88,7 +93,9 @@ export type GameState = {
         extraSystemOption1: boolean,
         extraSystemOption2: boolean,
         manualTraitChoice: boolean
-    }
+    },
+
+    logs: LogEntry[]
 }
 
 const SAVE_KEY = "local-save"
@@ -124,6 +131,12 @@ export function saveState() {
             definition: s.definition.id,
             purchaseCost: s.purchaseCost.log10Value,
             totalOutput: s.totalOutput.log10Value,
+            activeModifiers: s.activeModifiers.map(mod => ({
+                target: mod.target,
+                type: mod.type,
+                value: mod.value.log10Value,
+                source: mod.source
+            })) as ModifierSave[]
         })),
         costs: {
             newServiceCost: state.costs.baseServiceCost.log10Value
@@ -131,7 +144,9 @@ export function saveState() {
 
         dialogs: state.dialogs,
 
-        unlocks: state.unlocks
+        unlocks: state.unlocks,
+
+        logs: state.logs.slice(-MAX_LOG_ENTRIES)
     } as GameStateSave))
     console.log("SAVED GAME");
 }
@@ -161,14 +176,21 @@ export function loadState() {
             ...s,
             definition: ServiceRegistry[s.definition],
             purchaseCost: new LogarithmicValue(s.purchaseCost),
-            totalOutput: new LogarithmicValue(s.totalOutput)
+            totalOutput: new LogarithmicValue(s.totalOutput),
+            activeModifiers: (s.activeModifiers ?? []).map(mod => ({
+                target: mod.target,
+                type: mod.type,
+                value: new LogarithmicValue(mod.value),
+                source: mod.source
+            })) as Modifier[]
         })),
         costs: {
             baseServiceCost: new LogarithmicValue(parsedState.costs.newServiceCost)
         },
 
         dialogs: parsedState.dialogs,
-        unlocks: parsedState.unlocks
+        unlocks: parsedState.unlocks,
+        logs: (parsedState.logs ?? []).slice(-MAX_LOG_ENTRIES)
     } as GameState
 
 
@@ -176,6 +198,12 @@ export function loadState() {
 }
 
 function migrateSave(state: GameState): GameState {
+    if (state.meta.bootCompleted === undefined) {
+        state.meta.bootCompleted = true;
+    }
+    if (!state.logs) {
+        state.logs = [];
+    }
     return state
 }
 
@@ -188,7 +216,8 @@ export function resetState() {
             time: 0,
             lastSave: -1,
             lastTickTime: -1,
-            tickRate: 1000 // 1 time a second
+            tickRate: 1000, // 1 time a second
+            bootCompleted: false
         },
         resources: {
             operations: {
@@ -217,7 +246,9 @@ export function resetState() {
             extraSystemOption1: false,
             extraSystemOption2: false,
             manualTraitChoice: false
-        }
+        },
+
+        logs: []
     } as GameState
     saveState();
 }

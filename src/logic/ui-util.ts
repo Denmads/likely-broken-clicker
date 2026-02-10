@@ -64,3 +64,22 @@ export function formatDuration(seconds: number) {
     // .map(([key, val]) => `${val} ${key}${val !== 1 ? 's' : ''}`)
     .join(', ');
 };
+
+export function formatStopwatch(seconds: number) {
+  if (seconds < 0) seconds = -seconds;
+
+  const totalSeconds = Math.floor(seconds);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+}
+
+export function formatClockTime(timestampMs: number) {
+  const date = new Date(timestampMs);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
+}
