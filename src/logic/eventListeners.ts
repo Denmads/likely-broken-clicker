@@ -3,8 +3,16 @@ import type { GameEvent } from "./types";
 import * as GameState from './state';
 import { getServicePickOptions } from "./serviceRegistry";
 import { getTraitPickOptionsForService } from "./traitRegistry";
+import { appendLogLine } from "./ui/console-log/console-log";
+import { isUiLocked } from "./ui/ui-lock";
+import { ServiceRegistry } from "./serviceRegistry";
+import { TraitRegistry } from "./traitRegistry";
 
 function openSystemPickDialog(event: GameEvent) {
+    if (isUiLocked()) {
+        return;
+    }
+
     if (GameState.state.dialogs.systemPick.show) {
         return;
     }
@@ -35,17 +43,25 @@ function openSystemPickDialog(event: GameEvent) {
 GameLoop.registerEventListener("pick-system", openSystemPickDialog)
 
 function deploySystem(event: GameEvent) {
-    GameState.addService(event.data!["serviceId"] as string, GameState.getCurrentServiceCost())
+    const serviceId = event.data!["serviceId"] as string;
+    GameState.addService(serviceId, GameState.getCurrentServiceCost())
 
     GameState.state.resources.operations.value = GameState.state.resources.operations.value.sub(GameState.getCurrentServiceCost())
     GameState.state.dialogs.systemPick.show = false;
     GameState.state.dialogs.systemPick.options = [];
+
+    const serviceDefinition = ServiceRegistry[serviceId];
+    appendLogLine(`Deployed system: ${serviceDefinition.displayName} — ${serviceDefinition.description}`);
 
     GameLoop.updateUI();
 }
 GameLoop.registerEventListener("deploy-system", deploySystem)
 
 function addTrait(event: GameEvent) {
+    if (isUiLocked()) {
+        return;
+    }
+
     let serviceId = event.data!["serviceId"] as string
 
     let options = getTraitPickOptionsForService(serviceId)
@@ -62,6 +78,9 @@ function addTrait(event: GameEvent) {
         let option = options[Math.floor(Math.random() * options.length)]
 
         GameState.addTrait(serviceId, option)
+        const serviceDefinition = ServiceRegistry[serviceId];
+        const traitDefinition = TraitRegistry[option];
+        appendLogLine(`Installed trait on ${serviceDefinition.displayName}: ${traitDefinition.name} — ${traitDefinition.description}`);
         GameLoop.updateUI();
     }
 }
